@@ -19,7 +19,7 @@ function process_data(filepath::String; limit::Int=30)
     return combine(groupby(df, :city), :temp => summary_stats => [:min, :max, :avg])
 end
 
-function print_stats(stats_df)
+function print_stats(stats_df::DataFrame)
     for city_stat in eachrow(stats_df)
         println(
             "$(city_stat[:city]);$(city_stat[:min]);$(city_stat[:max]);$(city_stat[:avg])"
