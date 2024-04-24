@@ -9,19 +9,21 @@ install_julia_unix() {
 
 
 # Check the operating system and install Julia accordingly
-case "$(uname -s)" in
-    Linux*)
-        install_julia_unix
-        ;;
-    Darwin*)
-        install_julia_unix
-        ;;
-    *)
-        echo "Unsupported operating system"
-        exit 1
-        ;;
-esac
-
+if ! command -v julia &> /dev/null
+then
+    case "$(uname -s)" in
+        Linux*)
+            install_julia_unix
+            ;;
+        Darwin*)
+            install_julia_unix
+            ;;
+        *)
+            echo "Unsupported operating system"
+            exit 1
+            ;;
+    esac
+fi
 # Check if data.txt exists
 if [ ! -f "data.txt" ]; then
     echo "data.txt not found. Getting data..."

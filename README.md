@@ -2,8 +2,8 @@
 
 ## How to run
 
-    1. Install Julia
-    2. run.sh
+    1. Call run.sh
+    2. julia --project=. src/naive.jl data.txt
 
 ## Make changes
 
