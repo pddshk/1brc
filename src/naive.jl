@@ -27,7 +27,7 @@ function process_data(filepath::String)
     return stats
 end
 
-function print_stats(stats)
+function print_stats(stats::Dict{String,Dict{String,Float32}})
     for (city, city_stats) in stats
         min_temp = city_stats["min"]
         max_temp = city_stats["max"]
