@@ -32,7 +32,7 @@ function print_stats(stats)
         min_temp = city_stats["min"]
         max_temp = city_stats["max"]
         avg_temp = city_stats["sum"] / city_stats["count"]
-        println("$city: min=$min_temp, max=$max_temp, avg=$avg_temp")
+        println("$city;$min_temp;$max_temp;$avg_temp")
     end
 end
 
