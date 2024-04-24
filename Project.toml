@@ -1,0 +1,7 @@
+name = "ONEBRC"
+uuid = "fb1ad71c-4eea-42c3-a560-e25a579e00c8"
+authors = ["Jafagervik <jorgenafagervik@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
