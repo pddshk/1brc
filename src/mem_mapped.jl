@@ -1,12 +1,33 @@
-"""
-    Extremely naive implementation of the 1BRC task.
+using Mmap
 
-Credit: https://www.youtube.com/watch?v=utTaPW32gKY
-"""
+function test(filepath::String)
+    open(filepath, "r") do f
+        sz = Base.stat(f).size
+        data = Mmap.mmap(f, Vector{UInt8}, sz)
+        idxs = findall(isequal(0x0a), data)
+        vecvec = Vector{Vector{UInt8}}()
+
+        for i in eachindex(idxs)
+            if i == 1
+                push!(vecvec, data[1:idxs[i]-1])
+            else
+                push!(vecvec, data[idxs[i-1]+1:idxs[i]-1])
+            end
+        end
+        @show idxs
+        @show vecvec
+
+        @. println(String(vecvec))
+        #println(data)
+        return nothing
+    end
+
+end
+
 function process_data(filepath::String)
     stats = Dict{String,Dict{String,Float32}}()
 
-    open(filepath) do f
+    open(filepath, "r") do f
         for row in eachline(f)
             city, temp_str = split(row, ';')
             temp = parse(Float32, temp_str)
@@ -37,6 +58,6 @@ function print_stats(stats::Dict{String,Dict{String,Float32}})
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    filepath = !isempty(ARGS) ? "weather_stations.txt" : ARGS[1]
+    filepath = !isempty(ARGS) ? "data.txt" : ARGS[1]
     @time process_data(filepath) |> print_stats
 end

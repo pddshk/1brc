@@ -4,12 +4,12 @@
 Credit: https://www.youtube.com/watch?v=utTaPW32gKY
 """
 function process_data(filepath::String)
-    stats = Dict{String,Dict{String,Float32}}()
+    stats = Dict{String,Dict{String,Float16}}()
 
     open(filepath) do f
         for row in eachline(f)
             city, temp_str = split(row, ';')
-            temp = parse(Float32, temp_str)
+            temp = parse(Float16, temp_str)
 
             if haskey(stats, city)
                 city_stats = stats[city]
@@ -27,7 +27,7 @@ function process_data(filepath::String)
     return stats
 end
 
-function print_stats(stats::Dict{String,Dict{String,Float32}})
+function print_stats(stats::Dict{String,Dict{String,Float16}})
     for (city, city_stats) in stats
         min_temp = city_stats["min"]
         max_temp = city_stats["max"]
