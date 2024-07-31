@@ -1,7 +1,17 @@
+using BenchmarkTools
 using CSV
 
-function process_data(filepath::String)
-    stats = []
+
+mutable struct Record
+    min::Float32
+    max::Float32
+    sum::Float32
+    avg::Float32
+    count::Int
+end
+
+function process_data(filepath)
+    stats = Dict{String, Record}()
 
     csv_reader = CSV.File(
         filepath;
@@ -13,32 +23,39 @@ function process_data(filepath::String)
         types=[String, Float32],
     )
 
-    for (city, temp) in csv_reader
-        index = findfirst(x -> x[1] == city, stats)
-        if index !== nothing
-            city_stats = stats[index][2]
-            city_stats[1] = min(city_stats[1], temp)
-            city_stats[2] = max(city_stats[2], temp)
-            city_stats[3] += temp
-            city_stats[4] += 1
+    for (city::String, temp::Float32) in csv_reader
+        if haskey(stats, city)
+            city_stats = stats[city]
+            city_stats.min = min(temp, city_stats.min)
+            city_stats.max = max(temp, city_stats.max)
+            city_stats.sum += temp
+            city_stats.count += 1
         else
-            push!(stats, (city, [temp, temp, temp, 1]))  # (city, [min, max, sum, count])
+            stats[city] = Record(temp, temp, temp, 0, 1)
         end
     end
-
+    for (_, city_stats) in stats
+        city_stats.avg = city_stats.sum / city_stats.count
+    end
     return stats
 end
 
 function print_stats(stats)
     for (city, city_stats) in stats
-        min_temp = city_stats[1]
-        max_temp = city_stats[2]
-        avg_temp = city_stats[3] / city_stats[4]
-        println("$city;$min_temp;$max_temp;$avg_temp")
+        println(
+            city, ";", city_stats.min, ";", city_stats.max, ";", city_stats.avg
+        )
     end
 end
 
+function main()
+    filepath = isempty(ARGS) ? "weather_stations.csv" : ARGS[1]
+    bres = @benchmark process_data($filepath)
+    display(bres)
+    return bres
+end
+
+
 if abspath(PROGRAM_FILE) == @__FILE__
-    filepath = !isempty(ARGS) ? "weather_stations.csv" : ARGS[1]
-    @time print_stats(process_data(filepath))
+    main()
 end
